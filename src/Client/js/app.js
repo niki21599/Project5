@@ -1,4 +1,5 @@
 /* Global Variables */
+const regeneratorRuntime = require("regenerator-runtime");
 
 // Create a new date instance dynamically with JS
 let countryCodes = {
@@ -250,11 +251,6 @@ let countryCodes = {
 }
 
 
-let date = document.getElementById("startDate")
-date.value = ""
-let city = document.getElementById("zip").value = ""
-
-
 const convertSpaces = (city, to) => {
     let newCity = city.replace(" ", to)
     return newCity
@@ -271,36 +267,6 @@ const daysLeft = (futureDate) => {
     return left
 }
 
-
-const updateData = () =>{
-
-    let date = document.getElementById("startDate")
-    let city = document.getElementById("zip")
-    getLocationData(city.value)
-    .then(function(locationData){
-        getWeather(locationData.lat, locationData.lng, daysLeft(date.value))
-        .then(function (weatherData) {
-            getPictureUrl(locationData)
-            .then(function (picUrl) {
-
-                let card = {
-                    weatherData: weatherData,
-                    picUrl: picUrl,
-                    locationData: locationData,
-                    date: date.value
-                }
-                saveCard("/addCard", card)
-                updateUi(card)
-                city.value = ""
-                date.value = ""
-
-            })
-
-        }
-        )
-    })
-
-}
 
 const getLocationData = async (cityName) => {
     const baseURL = "http://api.geonames.org/postalCodeSearchJSON?"
@@ -502,7 +468,45 @@ const updateUi = (card) => {
 
 }
 
+const updateData = () =>{
+
+    let date = document.getElementById("startDate")
+    let city = document.getElementById("zip")
+    getLocationData(city.value)
+    .then(function(locationData){
+        getWeather(locationData.lat, locationData.lng, daysLeft(date.value))
+        .then(function (weatherData) {
+            getPictureUrl(locationData)
+            .then(function (picUrl) {
+
+                let card = {
+                    weatherData: weatherData,
+                    picUrl: picUrl,
+                    locationData: locationData,
+                    date: date.value
+                }
+                saveCard("/addCard", card)
+                updateUi(card)
+                city.value = ""
+                date.value = ""
+
+            })
+
+        }
+        )
+    })
+
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    let date = document.querySelector("#startDate")
+date.value = ""
+let city = document.querySelector("#zip").value = ""
+
 
 document.getElementById("generate").addEventListener("click", updateData);
+})
 
-export {updateUi, getLocationData, updateData}
+
+
+export {updateUi, getLocationData, updateData, daysLeft}
